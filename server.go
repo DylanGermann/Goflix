@@ -21,7 +21,7 @@ func newServer() *server {
 }
 
 func (s *server) serveHTTP(w http.ResponseWriter, r *http.Request) {
-	s.router.ServeHTTP(w, r)
+	logRequestMiddleware(s.router.ServeHTTP).ServeHTTP(w, r)
 }
 
 func (s *server) respond(w http.ResponseWriter, _ *http.Request, data interface{}, status int) {
