@@ -12,6 +12,7 @@ type Store interface {
 
 	GetMovies() ([]*Movie, error)
 	GetMovieById(id int64) (*Movie, error)
+	CreateMovie(m *Movie) error
 }
 
 type dbStore struct {
