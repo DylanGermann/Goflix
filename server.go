@@ -7,6 +7,8 @@ import (
 	"net/http"
 )
 
+const JwtAppKey = "training.go"
+
 type server struct {
 	router *mux.Router
 	store  Store
