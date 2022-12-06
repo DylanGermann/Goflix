@@ -7,6 +7,8 @@ import (
 	"net/http"
 )
 
+const JwtAppKey = "training.go"
+
 type server struct {
 	router *mux.Router
 	store  Store
@@ -21,7 +23,7 @@ func newServer() *server {
 }
 
 func (s *server) serveHTTP(w http.ResponseWriter, r *http.Request) {
-	s.router.ServeHTTP(w, r)
+	logRequestMiddleware(s.router.ServeHTTP).ServeHTTP(w, r)
 }
 
 func (s *server) respond(w http.ResponseWriter, _ *http.Request, data interface{}, status int) {
@@ -36,4 +38,8 @@ func (s *server) respond(w http.ResponseWriter, _ *http.Request, data interface{
 	if err != nil {
 		log.Printf("Cannot format json. err=%v\n", err)
 	}
+}
+
+func (s *server) decode(w http.ResponseWriter, r *http.Request, v interface{}) error {
+	return json.NewDecoder(r.Body).Decode(v)
 }
