@@ -42,6 +42,20 @@ func (s *server) handleTokenCreate() http.HandlerFunc {
 		}
 
 		// Check credentials
+		found, err := s.store.FindUser(req.Username, req.Password)
+		if err != nil {
+			msg := fmt.Sprintf("Cannot find user. err=%v", err)
+			s.respond(w, r, responseError{
+				Error: msg,
+			}, http.StatusInternalServerError)
+			return
+		}
+		if !found {
+			s.respond(w, r, responseError{
+				Error: "Invalid credentials",
+			}, http.StatusUnauthorized)
+			return
+		}
 		if req.Username != "golang" || req.Password != "rocks" {
 			s.respond(w, r, responseError{
 				Error: "Invalid credentials",

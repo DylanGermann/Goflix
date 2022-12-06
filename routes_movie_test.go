@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
@@ -40,6 +41,10 @@ func (t testStore) CreateMovie(m *Movie) error {
 	m.ID = t.movieId
 	t.movies = append(t.movies, m)
 	return nil
+}
+
+func (t testStore) FindUser(username string, password string) (bool, error) {
+	return true, nil
 }
 
 func TestMovieCreateUnit(t *testing.T) {
@@ -86,8 +91,10 @@ func TestMovieCreateIntegration(t *testing.T) {
 	var buf bytes.Buffer
 	err := json.NewEncoder(&buf).Encode(p)
 	assert.Nil(t, err)
-
 	r := httptest.NewRequest("POST", "/api/movies/", &buf)
+	token := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NzAzNDAxODksImlhdCI6MTY3MDMzNjU4OSwidXNlcm5hbWUiOiJnb2xhbmcifQ.lHG4VWKAONP6AD1t6SqkwTk7KTMjzFNTa6aTGf9Bvs0"
+	r.Header.Set("Authorization", fmt.Sprintf("Bearer %v", token))
+
 	w := httptest.NewRecorder()
 
 	srv.serveHTTP(w, r)
